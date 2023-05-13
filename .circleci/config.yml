@@ -17,7 +17,7 @@ jobs:
           name: Push
           command: |
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            - docker push vhthieu100499/udagram-api-feed:v1
+            docker push vhthieu100499/udagram-api-feed:v1
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
