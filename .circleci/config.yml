@@ -18,6 +18,57 @@ jobs:
           command: |
             echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
             docker push vhthieu100499/udagram-api-feed:v1
+  build-api-user:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t udagram-api-user ./udagram-api-user
+      - run:
+          name: Tagging
+          command: docker tag udagram-api-user vhthieu100499/udagram-api-user:v1
+      - run:
+          name: Push
+          command: |
+            echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+            docker push vhthieu100499/udagram-api-user:v1
+  build-frontend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t udagram-frontend ./udagram-frontend
+      - run:
+          name: Tagging
+          command: docker tag udagram-frontend vhthieu100499/udagram-frontend:v1
+      - run:
+          name: Push
+          command: |
+            echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+            docker push vhthieu100499/udagram-frontend:v1
+  build-reserveproxy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t udagram-reserveproxy ./udagram-reserveproxy
+      - run:
+          name: Tagging
+          command: docker tag udagram-reserveproxy vhthieu100499/udagram-reserveproxy:v1
+      - run:
+          name: Push
+          command: |
+            echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+            docker push vhthieu100499/udagram-reserveproxy:v1
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
@@ -25,3 +76,12 @@ workflows:
   build-master:
     jobs:
       - build-api-feed
+      - build-api-user:
+          requires: 
+          - build-api-feed
+      - build-frontend:
+          requires: 
+          - build-api-user
+      - build-reserveproxy:
+          requires: 
+          - build-frontend
