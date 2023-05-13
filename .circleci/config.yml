@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-api-feed:
     docker:
-      - image: circleci/buildpack-deps:stretch
+      - image: cimg/base:stable
     steps:
       - checkout
       - setup_remote_docker
@@ -69,6 +69,7 @@ jobs:
           command: |
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push vhthieu100499/udagram-reverseproxy:v1
+
 workflows:
   build-master:
     jobs:
