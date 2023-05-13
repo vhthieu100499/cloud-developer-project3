@@ -1,26 +1,96 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
-version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
+version: 2
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
+  build-api-feed:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+      - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
+      - setup_remote_docker
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
+          name: Build Docker image
+          command: docker build -t udagram-api-feed ./udagram-api-feed
+      - run:
+          name: Tagging
+          command: docker tag udagram-api-feed vhthieu100499/udagram-api-feed:v1
+      - run:
+          name: Push
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            - docker push vhthieu100499/udagram-api-feed:v1
+  build-api-user:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t udagram-api-user ./udagram-api-user
+      - run:
+          name: Tagging
+          command: docker tag udagram-api-user vhthieu100499/udagram-api-user:v1
+      - run:
+          name: Push
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push vhthieu100499/udagram-api-user:v1
+  build-frontend:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t udagram-frontend ./udagram-frontend
+      - run:
+          name: Tagging
+          command: docker tag udagram-frontend vhthieu100499/udagram-frontend:v1
+      - run:
+          name: Push
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push vhthieu100499/udagram-frontend:v1
+  build-reverseproxy:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t udagram-reverseproxy ./udagram-reverseproxy
+      - run:
+          name: Tagging
+          command: docker tag udagram-reverseproxy vhthieu100499/udagram-reverseproxy:v1
+      - run:
+          name: Push
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push vhthieu100499/udagram-reverseproxy:v1
 workflows:
-  say-hello-workflow:
+  version: 2
+  build-master:
     jobs:
-      - say-hello
+      - build-api-feed:
+          filters:
+            branches:
+              only: master
+      - build-api-user:
+          requires:
+            - build-api-feed
+          filters:
+            branches:
+              only: master
+      - build-frontend:
+          requires:
+            - build-api-user
+          filters:
+            branches:
+              only: master
+      - build-reverseproxy:
+          requires:
+            - build-frontend
+          filters:
+            branches:
+              only: master
