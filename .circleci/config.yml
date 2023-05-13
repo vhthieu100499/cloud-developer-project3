@@ -1,6 +1,8 @@
 version: 2
 jobs:
   build-api-feed:
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - run:
           name: Build Docker image
@@ -14,6 +16,8 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             - docker push vhthieu100499/udagram-api-feed:v1
   build-api-user:
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - run:
           name: Build Docker image
@@ -27,6 +31,8 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push vhthieu100499/udagram-api-user:v1
   build-frontend:
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - run:
           name: Build Docker image
@@ -40,6 +46,8 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push vhthieu100499/udagram-frontend:v1
   build-reverseproxy:
+    docker:
+      - image: circleci/buildpack-deps:stretch
     steps:
       - run:
           name: Build Docker image
