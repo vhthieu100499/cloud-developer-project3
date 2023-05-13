@@ -52,7 +52,7 @@ jobs:
           command: |
             echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
             docker push vhthieu100499/udagram-frontend:v1
-  build-reserveproxy:
+  build-reverseproxy:
     docker:
       - image: cimg/base:stable
     steps:
@@ -60,15 +60,15 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker image
-          command: docker build -t udagram-reserveproxy ./udagram-reserveproxy
+          command: docker build -t udagram-reverseproxy ./udagram-reverseproxy
       - run:
           name: Tagging
-          command: docker tag udagram-reserveproxy vhthieu100499/udagram-reserveproxy:v1
+          command: docker tag udagram-reverseproxy vhthieu100499/udagram-reverseproxy:v1
       - run:
           name: Push
           command: |
             echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
-            docker push vhthieu100499/udagram-reserveproxy:v1
+            docker push vhthieu100499/udagram-reverseproxy:v1
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
@@ -82,6 +82,6 @@ workflows:
       - build-frontend:
           requires: 
           - build-api-user
-      - build-reserveproxy:
+      - build-reverseproxy:
           requires: 
           - build-frontend
