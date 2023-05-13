@@ -4,6 +4,8 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
+      - checkout
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: docker build -t udagram-api-feed ./udagram-api-feed
@@ -19,6 +21,8 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
+      - checkout
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: docker build -t udagram-api-user ./udagram-api-user
@@ -34,6 +38,8 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
+      - checkout
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: docker build -t udagram-frontend ./udagram-frontend
@@ -49,6 +55,8 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
+      - checkout
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: docker build -t udagram-reverseproxy ./udagram-reverseproxy
