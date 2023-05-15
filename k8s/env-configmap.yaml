@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  AWS_BUCKET: hieuvht1-project3
+  AWS_PROFILE: default
+  AWS_REGION: us-east-1
+  JWT_SECRET: testing
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: Admin123
+  POSTGRES_DB: project3_db
+  POSTGRES_HOST: hieuvht-project3-db.cjivizuqxfso.us-east-1.rds.amazonaws.com
+  URL: http://localhost:8100
+  NODE_OPTIONS: --max-old-space-size=1024
